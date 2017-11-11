@@ -1,0 +1,23 @@
+service: cors-proxy
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  timeout: 60
+  stage: dev
+  region: eu-central-1
+  environment:
+    foo: 123
+
+functions:
+  lambda:
+    name: cors-proxy
+    handler: handler.corsProxy
+    events:
+      - http:
+          path: ''
+          method: get
+          cors: true
