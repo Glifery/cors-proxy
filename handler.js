@@ -29,11 +29,13 @@ module.exports.corsProxy = (event, context, callback) => {
     }
 
     return new Promise((resolve, reject) => {
+        let originalRequestBody = event.body;
         request({
             url: params.url,
             method: event.httpMethod,
-            timeout: 20000
-        }, (err, originalResponse) => {
+            timeout: 20000,
+            json: event.httpMethod === 'POST' ? JSON.parse(originalRequestBody) : null,
+        }, (err, originalResponse, body) => {
             if (err) {
                 console.log(`Got error`, err);
 
@@ -45,6 +47,7 @@ module.exports.corsProxy = (event, context, callback) => {
             }
 
             console.log(`Got response from ${params.url} ---> {statusCode: ${originalResponse.statusCode}}`);
+            const proxyBody = originalRequestBody ? JSON.stringify(body) : originalResponse.body;
 
             const proxyResponse = {
                 statusCode: originalResponse.statusCode,
@@ -53,7 +56,7 @@ module.exports.corsProxy = (event, context, callback) => {
                     "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
                     "content-type": originalResponse.headers['content-type']
                 },
-                body: originalResponse.body
+                body: proxyBody
             };
 
             callback(null, proxyResponse);

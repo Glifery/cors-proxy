@@ -21,3 +21,7 @@ functions:
           path: ''
           method: get
           cors: true
+      - http:
+          path: ''
+          method: post
+          cors: true
