@@ -13,6 +13,7 @@ const request = require('request');
  */
 module.exports.corsProxy = (event, context, callback) => {
     let params = event.queryStringParameters;
+    let { Host, host, Origin, origin, ...headers } = event.headers;
 
     console.log(event);
     console.log(`Got request with params:`, params);
@@ -35,6 +36,7 @@ module.exports.corsProxy = (event, context, callback) => {
             method: event.httpMethod,
             timeout: 20000,
             json: event.httpMethod === 'POST' ? JSON.parse(originalRequestBody) : null,
+            headers,
         }, (err, originalResponse, body) => {
             if (err) {
                 console.log(`Got error`, err);
