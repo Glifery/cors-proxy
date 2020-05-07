@@ -35,7 +35,6 @@ module.exports.corsProxy = event => {
             'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
             'content-type': response.headers['content-type']
         },
-        isBase64Encoded: true,
         body: response.data
     }));
 };
