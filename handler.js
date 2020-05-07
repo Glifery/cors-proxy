@@ -27,7 +27,7 @@ module.exports.corsProxy = event => {
         url: params.url,
         method: event.httpMethod,
         timeout: 20000,
-        responseType: 'arraybuffer'
+	responseType: 'arraybuffer'
     }).then(response => ({
         statusCode: response.status,
         headers: {
@@ -36,6 +36,6 @@ module.exports.corsProxy = event => {
             'content-type': response.headers['content-type']
         },
         isBase64Encoded: true,
-        body: Buffer.from(response.data, 'binary').toString('base64')
+        body: response.data
     }));
 };

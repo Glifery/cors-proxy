@@ -4,10 +4,10 @@
   "description": "CORS proxy",
   "dependencies": {
     "axios": "^0.19.2",
-    "request": "^2.69.0",
-    "serverless": "^1.24.1"
+    "request": "^2.88.2",
+    "serverless": "^1.69.0"
   },
   "devDependencies": {
-    "serverless-offline": "^3.9.0"
+    "serverless-offline": "^6.1.5"
   }
 }
