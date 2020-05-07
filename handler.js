@@ -1,6 +1,6 @@
 'use strict';
 
-const axios = require('axios');
+const request = require('request');
 
 /**
  * Use this command to launch the handler from console:
@@ -11,7 +11,7 @@ const axios = require('axios');
  *
  * http://localhost:3000/?url=https://github.com
  */
-module.exports.corsProxy = event => {
+module.exports.corsProxy = (event, context, callback) => {
     const params = event.queryStringParameters;
 
     if (!params.url) {
@@ -20,21 +20,44 @@ module.exports.corsProxy = event => {
             body: "Unable get url from 'url' query parameter"
         };
 
-        return Promise.resolve(errorResponse);
+        callback(null, errorResponse);
+
+        return;
     }
 
-    return axios({
-        url: params.url,
-        method: event.httpMethod,
-        timeout: 20000,
-	responseType: 'arraybuffer'
-    }).then(response => ({
-        statusCode: response.status,
-        headers: {
-            'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-            'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
-            'content-type': response.headers['content-type']
-        },
-        body: response.data
-    }));
+    return new Promise((resolve, reject) => {
+        request(
+          {
+              url: params.url,
+              method: event.httpMethod,
+              timeout: 20000,
+              encoding: null,
+              Accept: 'image/*'
+          },
+          (err, originalResponse) => {
+              if (err) {
+                  callback(err);
+
+                  reject(err);
+
+                  return;
+              }
+
+              const proxyBody = originalResponse.body.toString('base64');
+
+              const proxyResponse = {
+                  statusCode: originalResponse.statusCode,
+                  headers: {
+                      'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+                      'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+                      'content-type': originalResponse.headers['content-type']
+                  },
+                  isBase64Encoded: true,
+                  body: proxyBody
+              };
+
+              resolve(proxyResponse);
+          }
+        );
+    });
 };
