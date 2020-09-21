@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 
 /**
  * Use this command to launch the handler from console:
@@ -31,16 +31,17 @@ module.exports.corsProxy = async (event) => {
 
     const requestParams = Object.entries(params)
       .reduce((acc, param) => {
-        if (param[0] !== "url") acc.push(param.join("="));
+        if (param[0] !== 'url') acc.push(param.join('='));
         return acc;
       }, [])
-      .join("&");
+      .join('&');
 
     const url = `${params.url}${requestParams}`;
+    const hasBody = /(POST|PUT)/i.test(event.httpMethod);
     fetch(url, {
       method: event.httpMethod,
       timeout: 20000,
-      body: event.httpMethod === "POST" ? event.body : null,
+      body: hasBody ? event.body : null,
       headers,
     })
       .then((res) => {
@@ -51,9 +52,9 @@ module.exports.corsProxy = async (event) => {
         proxyResponse = {
           statusCode: res.status,
           headers: {
-            "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-            "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
-            "content-type": res.headers["content-type"],
+            'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+            'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+            'content-type': res.headers['content-type'],
           },
         };
         return res.text();
