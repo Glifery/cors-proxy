@@ -12,10 +12,9 @@ const fetch = require('node-fetch');
  * http://localhost:3000/?url=https://github.com
  */
 module.exports.corsProxy = async (event) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let params = event.queryStringParameters;
     let { Host, host, Origin, origin, ...headers } = event.headers;
-    let proxyResponse = {};
 
     console.log(event);
     console.log(`Got request with params:`, params);
@@ -38,39 +37,32 @@ module.exports.corsProxy = async (event) => {
 
     const url = `${params.url}${requestParams}`;
     const hasBody = /(POST|PUT)/i.test(event.httpMethod);
-    fetch(url, {
-      method: event.httpMethod,
-      timeout: 20000,
-      body: hasBody ? event.body : null,
-      headers,
-    })
-      .then((res) => {
-        console.log(
-          `Got response from ${url} ---> {statusCode: ${res.status}}`,
-        );
-
-        proxyResponse = {
-          statusCode: res.status,
-          headers: {
-            'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-            'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
-            'content-type': res.headers['content-type'],
-          },
-        };
-        return res.text();
-      })
-      .then((body) => {
-        proxyResponse.body = body;
-
-        resolve(proxyResponse);
-      })
-      .catch((err) => {
-        if (err) {
-          console.error(`Got error`, err);
-
-          reject(err);
-          return;
-        }
+    try {
+      const res = await fetch(url, {
+        method: event.httpMethod,
+        timeout: 20000,
+        body: hasBody ? event.body : null,
+        headers,
       });
+      console.log(`Got response from ${url} ---> {statusCode: ${res.status}}`);
+
+      let proxyResponse = {
+        statusCode: res.status,
+        headers: {
+          'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+          'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+          'content-type': res.headers['content-type'],
+        },
+      };
+
+      const body = await res.text();
+      proxyResponse.body = body;
+      resolve(proxyResponse);
+    } catch (err) {
+      console.error(`Caught error: `, err);
+
+      reject(err);
+      return;
+    }
   });
 };
