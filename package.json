@@ -2,11 +2,15 @@
   "name": "cors-proxy",
   "version": "1.0.0",
   "description": "CORS proxy",
+  "scripts": {
+    "deploy": "node_modules/.bin/serverless deploy",
+    "offline": "node_modules/.bin/serverless offline"
+  },
   "dependencies": {
-    "request": "^2.69.0",
-    "serverless": "^1.24.1"
+    "node-fetch": "^2.6.1",
+    "serverless": "^2.1.1"
   },
   "devDependencies": {
-    "serverless-offline": "^3.9.0"
+    "serverless-offline": "^6.7.0"
   }
 }

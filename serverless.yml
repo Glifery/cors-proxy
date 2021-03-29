@@ -25,3 +25,7 @@ functions:
           path: ''
           method: post
           cors: true
+      - http:
+          path: ''
+          method: put
+          cors: true

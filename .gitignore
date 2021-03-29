@@ -3,5 +3,6 @@
 *node_modules*
 *.serverless*
 npm-debug.log
+debug.log
 */config/*.yml
 !*/config/*.dist
