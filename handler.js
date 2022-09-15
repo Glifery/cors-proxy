@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const fetch = require('node-fetch');
+import fetch from "node-fetch";
 
 /**
  * Use this command to launch the handler from console:
@@ -11,15 +11,28 @@ const fetch = require('node-fetch');
  *
  * http://localhost:3000/?url=https://github.com
  */
-module.exports.corsProxy = async (event) => {
+export const corsProxy = async (event) => {
   return new Promise(async (resolve, reject) => {
-    let params = event.queryStringParameters;
-    let { Host, host, Origin, origin, ...headers } = event.headers;
+    const {
+      body,
+      headers: h,
+      queryStringParameters,
+      pathParameters: { default: url },
+      requestContext: {
+        http: { method },
+      },
+    } = event;
 
-    console.log(event);
-    console.log(`Got request with params:`, params);
+    let { Host, host, Origin, origin, ...headers } = h;
 
-    if (!params.url) {
+    console.log({
+      url,
+      queryStringParameters,
+    });
+
+    //console.log(event);
+
+    if (!url) {
       const errorResponse = {
         statusCode: 400,
         body: "Unable get url from 'url' query parameter",
@@ -28,35 +41,39 @@ module.exports.corsProxy = async (event) => {
       return;
     }
 
-    const requestParams = Object.entries(params)
-      .reduce((acc, param) => {
-        if (param[0] !== 'url') acc.push(param.join('='));
-        return acc;
-      }, [])
-      .join('&');
+    const entries = Object.entries(queryStringParameters || {});
+    const q =
+      (entries.length &&
+        entries
+          .reduce((acc, param) => {
+            acc.push(param.join("="));
+            return acc;
+          }, [])
+          .join("&")) ||
+      null;
 
-    const url = `${params.url}${requestParams}`;
-    const hasBody = /(POST|PUT)/i.test(event.httpMethod);
+    const URL = `${url}${(q && "?" + q) || ""}`;
+    const hasBody = /(POST|PUT)/i.test(method);
     try {
-      const res = await fetch(url, {
-        method: event.httpMethod,
+      const res = await fetch(URL, {
+        method,
         timeout: 20000,
-        body: hasBody ? event.body : null,
+        body: hasBody ? body : null,
         headers,
       });
-      console.log(`Got response from ${url} ---> {statusCode: ${res.status}}`);
+      console.log(`Got response from ${URL} ---> {statusCode: ${res.status}}`);
 
       let proxyResponse = {
         statusCode: res.status,
         headers: {
-          'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-          'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
-          'content-type': res.headers['content-type'],
+          "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+          "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
+          "content-type": res.headers["content-type"],
         },
       };
 
-      const body = await res.text();
-      proxyResponse.body = body;
+      const text = await res.text();
+      proxyResponse.body = text;
       resolve(proxyResponse);
     } catch (err) {
       console.error(`Caught error: `, err);

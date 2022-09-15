@@ -5,27 +5,18 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs16.x
   timeout: 60
   stage: dev
-  region: eu-central-1
+  region: us-east-1
   environment:
     foo: 123
+  httpApi:
+    cors: true
 
 functions:
   lambda:
     name: cors-proxy
     handler: handler.corsProxy
     events:
-      - http:
-          path: ''
-          method: get
-          cors: true
-      - http:
-          path: ''
-          method: post
-          cors: true
-      - http:
-          path: ''
-          method: put
-          cors: true
+      - httpApi: "*"
