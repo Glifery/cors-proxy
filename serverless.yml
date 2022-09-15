@@ -1,3 +1,5 @@
+org: loganpowell
+console: true
 service: cors-proxy
 
 plugins:
@@ -6,7 +8,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs16.x
-  timeout: 60
+  timeout: 10 # max = 30
   stage: dev
   region: us-east-1
   environment:
