@@ -88,7 +88,7 @@ export const corsProxy = async (event) => {
 //        "sec-ch-ua-mobile": "?0",
 //        "x-amzn-trace-id": "Root=1-63251f33-7b98f5a105cccae234c99190",
 //        "sec-ch-ua-platform": "\"Windows\"",
-//        "host": "l4vujdq7gxgjawqx7aopizvhz40aqfxn.lambda-url.us-east-1.on.aws",
+//        "host": "somelambdauuid.lambda-url.us-east-1.on.aws",
 //        "cache-control": "no-cache",
 //        "accept-encoding": "gzip, deflate, br",
 //        "sec-fetch-dest": "empty",
@@ -100,9 +100,8 @@ export const corsProxy = async (event) => {
 //    },
 //    "requestContext": {
 //        "accountId": "anonymous",
-//        "apiId": "l4vujdq7gxgjawqx7aopizvhz40aqfxn",
-//        "domainName": "l4vujdq7gxgjawqx7aopizvhz40aqfxn.lambda-url.us-east-1.on.aws",
-//        "domainPrefix": "l4vujdq7gxgjawqx7aopizvhz40aqfxn",
+//        "domainName": "somelambdauuid.lambda-url.us-east-1.on.aws",
+//        "domainPrefix": "somelambdauuid",
 //        "http": {
 //            "method": "GET",
 //            "path": "/https://api.census.gov/data/2021/acs/acs1/cprofile",

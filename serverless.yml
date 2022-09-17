@@ -1,9 +1,6 @@
 org: loganpowell
 service: cors
 
-#plugins:
-#    - serverless-offline
-
 provider:
     profile: AWS_CDK_2022
     name: aws

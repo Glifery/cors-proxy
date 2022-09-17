@@ -2,22 +2,6 @@
 
 Simple AWS Lambda based proxy server for making CORS requests from browser to any HTTP server.
 
-### Run locally
-
-#### 1. Install
-
-```
-npm install
-```
-
-#### 2. Use
-
-Open your browser and go to `http://localhost:3000/<origin page>`. For example:
-
-```
-http://localhost:3000/https://github.com/
-```
-
 ### Run on AWS
 
 #### 0. Requirements
@@ -52,5 +36,5 @@ npm run deploy
 Open your browser and use `endpoint` field from previous console response as base address. For example:
 
 ```
-https://qwertyuiop.execute-api.eu-central-1.amazonaws.com/dev/https://github.com/
+ https://somelambdauuid.lambda-url.us-east-1.on.aws/https://github.com/
 ```
