@@ -10,19 +10,7 @@ Simple AWS Lambda based proxy server for making CORS requests from browser to an
 npm install
 ```
 
-#### 2. Run
-
-```
-node_modules/.bin/serverless offline
-```
-
-or
-
-```
-npm run offline
-```
-
-#### 3. Use
+#### 2. Use
 
 Open your browser and go to `http://localhost:3000/<origin page>`. For example:
 
@@ -57,36 +45,6 @@ or
 
 ```
 npm run deploy
-```
-
-You will see such console response:
-
-```
-Serverless: Packaging service...
-Serverless: Excluding development dependencies...
-Serverless: Creating Stack...
-Serverless: Checking Stack create progress...
-.....
-Serverless: Stack create finished...
-Serverless: Uploading CloudFormation file to S3...
-Serverless: Uploading artifacts...
-Serverless: Uploading service .zip file to S3 (16.08 MB)...
-Serverless: Validating template...
-Serverless: Updating Stack...
-Serverless: Checking Stack update progress...
-..............................
-Serverless: Stack update finished...
-Service Information
-service: cors-proxy
-stage: dev
-region: eu-central-1
-stack: cors-proxy-dev
-api keys:
-  None
-endpoints:
-  GET - https://qwertyuiop.execute-api.eu-central-1.amazonaws.com/dev/
-functions:
-  lambda: cors-proxy-dev-lambda
 ```
 
 #### 3. Use

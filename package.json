@@ -11,6 +11,14 @@
     "node-fetch": "^3.2.10"
   },
   "devDependencies": {
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "serverless-offline": "^10.0.2"
+  },
+  "prettier": {
+    "trailingComma": "none",
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true
   }
 }

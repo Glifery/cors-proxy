@@ -1,85 +1,120 @@
-"use strict";
+'use strict'
 
-import fetch from "node-fetch";
+import fetch from 'node-fetch'
 
-/**
- * Use this command to launch the handler from console:
- *
- * node_modules/.bin/serverless invoke local -f lambda -d '{"httpMethod":"GET","queryStringParameters":{"url":"http://github.com"}}'
- *
- *  or from browser
- *
- * http://localhost:3000/?url=https://github.com
- */
 export const corsProxy = async (event) => {
-  return new Promise(async (resolve, reject) => {
-    const {
-      body,
-      headers: h,
-      queryStringParameters,
-      pathParameters: { default: url },
-      requestContext: {
-        http: { method },
-      },
-    } = event;
+    return new Promise(async (resolve, reject) => {
+        const {
+            body,
+            headers: h,
+            // "rawPath": "/https://api.census.gov/data/2021/acs/acs1/cprofile"
+            rawPath,
+            // "rawQueryString": "get=NAME,CP02_2021_001E,CP02_2017_013E&for=state:*"
+            rawQueryString,
+            requestContext: {
+                http: { method }
+            }
+        } = event
 
-    let { Host, host, Origin, origin, ...headers } = h;
+        //console.log(JSON.stringify(event, null, 2))
+        let { Host, host, Origin, origin, ...headers } = h
 
-    console.log({
-      url,
-      queryStringParameters,
-    });
+        const path = rawPath.substr(1)
+        const query = rawQueryString ? '?' + rawQueryString : ''
+        const url = path + query
 
-    //console.log(event);
+        if (!url) {
+            const errorResponse = {
+                statusCode: 400,
+                body: "Unable get url from 'url' query parameter"
+            }
+            reject(Error(errorResponse))
+            return
+        }
 
-    if (!url) {
-      const errorResponse = {
-        statusCode: 400,
-        body: "Unable get url from 'url' query parameter",
-      };
-      reject(Error(errorResponse));
-      return;
-    }
+        const hasBody = /(POST|PUT)/i.test(method)
+        try {
+            const res = await fetch(url, {
+                method,
+                timeout: 20000,
+                body: hasBody ? body : null,
+                headers
+            })
+            console.log(
+                `Got response from ${url} ---> {statusCode: ${res.status}}`
+            )
 
-    const entries = Object.entries(queryStringParameters || {});
-    const q =
-      (entries.length &&
-        entries
-          .reduce((acc, param) => {
-            acc.push(param.join("="));
-            return acc;
-          }, [])
-          .join("&")) ||
-      null;
+            let proxyResponse = {
+                statusCode: res.status,
+                headers: {
+                    // Required for CORS support to work
+                    'Access-Control-Allow-Origin': '*',
+                    // Required for cookies, authorization headers with HTTPS
+                    'Access-Control-Allow-Credentials': true,
+                    'content-type': res.headers['content-type']
+                }
+            }
 
-    const URL = `${url}${(q && "?" + q) || ""}`;
-    const hasBody = /(POST|PUT)/i.test(method);
-    try {
-      const res = await fetch(URL, {
-        method,
-        timeout: 20000,
-        body: hasBody ? body : null,
-        headers,
-      });
-      console.log(`Got response from ${URL} ---> {statusCode: ${res.status}}`);
+            const text = await res.text()
+            proxyResponse.body = text
+            resolve(proxyResponse)
+        } catch (err) {
+            console.error(`Caught error: `, err)
 
-      let proxyResponse = {
-        statusCode: res.status,
-        headers: {
-          "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-          "Access-Control-Allow-Credentials": true, // Required for cookies, authorization headers with HTTPS
-          "content-type": res.headers["content-type"],
-        },
-      };
+            reject(err)
+            return
+        }
+    })
+}
 
-      const text = await res.text();
-      proxyResponse.body = text;
-      resolve(proxyResponse);
-    } catch (err) {
-      console.error(`Caught error: `, err);
-
-      reject(err);
-      return;
-    }
-  });
-};
+//example function URL event:
+//{
+//    "version": "2.0",
+//    "routeKey": "$default",
+//    "rawPath": "/https://api.census.gov/data/2021/acs/acs1/cprofile",
+//    "rawQueryString": "get=NAME,CP02_2021_001E,CP02_2017_013E&for=state:*",
+//    "headers": {
+//        "sec-fetch-mode": "cors",
+//        "x-amzn-tls-version": "TLSv1.2",
+//        "sec-fetch-site": "none",
+//        "accept-language": "en-US,en;q=0.9,pt-PT;q=0.8,pt;q=0.7,fr;q=0.6,la;q=0.5",
+//        "x-forwarded-proto": "https",
+//        "postman-token": "76e9e064-df79-762d-233e-5f76e27f584f",
+//        "x-forwarded-port": "443",
+//        "x-forwarded-for": "108.45.130.51",
+//        "accept": "*/*",
+//        "x-amzn-tls-cipher-suite": "ECDHE-RSA-AES128-GCM-SHA256",
+//        "sec-ch-ua": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"",
+//        "sec-ch-ua-mobile": "?0",
+//        "x-amzn-trace-id": "Root=1-63251f33-7b98f5a105cccae234c99190",
+//        "sec-ch-ua-platform": "\"Windows\"",
+//        "host": "l4vujdq7gxgjawqx7aopizvhz40aqfxn.lambda-url.us-east-1.on.aws",
+//        "cache-control": "no-cache",
+//        "accept-encoding": "gzip, deflate, br",
+//        "sec-fetch-dest": "empty",
+//        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+//    },
+//    "queryStringParameters": {
+//        "get": "NAME,CP02_2021_001E,CP02_2017_013E",
+//        "for": "state:*"
+//    },
+//    "requestContext": {
+//        "accountId": "anonymous",
+//        "apiId": "l4vujdq7gxgjawqx7aopizvhz40aqfxn",
+//        "domainName": "l4vujdq7gxgjawqx7aopizvhz40aqfxn.lambda-url.us-east-1.on.aws",
+//        "domainPrefix": "l4vujdq7gxgjawqx7aopizvhz40aqfxn",
+//        "http": {
+//            "method": "GET",
+//            "path": "/https://api.census.gov/data/2021/acs/acs1/cprofile",
+//            "protocol": "HTTP/1.1",
+//            "sourceIp": "108.45.130.51",
+//            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+//        },
+//        "requestId": "86a54954-b4c2-4de7-87ff-506c5d7b4a72",
+//        "routeKey": "$default",
+//        "stage": "$default",
+//        "time": "17/Sep/2022:01:13:23 +0000",
+//        "timeEpoch": 1663377203304
+//    },
+//    "isBase64Encoded": false
+//}.
