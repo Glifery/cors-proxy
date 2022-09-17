@@ -1,6 +1,6 @@
 # CORS proxy
 
-Simple AWS Lambda based proxy server for making CORS requests from browser to any HTTP server.
+Simple AWS Lambda URL based proxy for making CORS requests from browser to any HTTP server.
 
 ### Run on AWS
 
@@ -36,5 +36,5 @@ npm run deploy
 Open your browser and use `endpoint` field from previous console response as base address. For example:
 
 ```
- https://somelambdauuid.lambda-url.us-east-1.on.aws/https://github.com/
+ https://xxxxxxxxx.lambda-url.us-east-1.on.aws/https://github.com/
 ```
