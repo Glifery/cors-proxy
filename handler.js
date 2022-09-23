@@ -47,10 +47,11 @@ export const corsProxy = async (event) => {
             let proxyResponse = {
                 statusCode: res.status,
                 headers: {
+                    // @deprecated: function URL CORS support is enabled in serverless.yml
                     // Required for CORS support to work
-                    'Access-Control-Allow-Origin': '*',
+                    //'Access-Control-Allow-Origin': '*',
                     // Required for cookies, authorization headers with HTTPS
-                    'Access-Control-Allow-Credentials': true,
+                    //'Access-Control-Allow-Credentials': true,
                     'content-type': res.headers['content-type']
                 }
             }
@@ -61,7 +62,7 @@ export const corsProxy = async (event) => {
         } catch (err) {
             console.error(`Caught error: `, err)
 
-            reject(err)
+            reject(JSON.stringify(err, null, 2))
             return
         }
     })

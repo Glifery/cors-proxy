@@ -14,4 +14,6 @@ functions:
         handler: handler.corsProxy
         url:
             # Allow CORS for all requests from any origin
+            # docs: https://docs.aws.amazon.com/lambda/latest/dg/API_Cors.html
             cors: true
+
