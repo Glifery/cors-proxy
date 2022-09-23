@@ -1,31 +1,19 @@
-service: cors-proxy
-
-plugins:
-  - serverless-offline
+org: loganpowell
+service: cors
 
 provider:
-  name: aws
-  runtime: nodejs12.x
-  timeout: 60
-  stage: dev
-  region: eu-central-1
-  environment:
-    foo: 123
+    profile: AWS_CDK_2022
+    name: aws
+    runtime: nodejs16.x
+    timeout: 10 # max = 30
+    stage: dev
+    region: us-east-1
 
 functions:
-  lambda:
-    name: cors-proxy
-    handler: handler.corsProxy
-    events:
-      - http:
-          path: ''
-          method: get
-          cors: true
-      - http:
-          path: ''
-          method: post
-          cors: true
-      - http:
-          path: ''
-          method: put
-          cors: true
+    proxy:
+        handler: handler.corsProxy
+        url:
+            # Allow CORS for all requests from any origin
+            # docs: https://docs.aws.amazon.com/lambda/latest/dg/API_Cors.html
+            cors: true
+

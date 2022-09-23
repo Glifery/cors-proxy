@@ -1,16 +1,23 @@
 {
-  "name": "cors-proxy",
-  "version": "1.0.0",
-  "description": "CORS proxy",
-  "scripts": {
-    "deploy": "node_modules/.bin/serverless deploy",
-    "offline": "node_modules/.bin/serverless offline"
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.1",
-    "serverless": "^2.1.1"
-  },
-  "devDependencies": {
-    "serverless-offline": "^6.7.0"
-  }
+    "name": "cors-proxy",
+    "version": "1.0.0",
+    "description": "CORS proxy",
+    "type": "module",
+    "scripts": {
+        "deploy": "serverless deploy"
+    },
+    "dependencies": {
+        "node-fetch": "^3.2.10"
+    },
+    "devDependencies": {
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "serverless-offline": "^10.0.2"
+    },
+    "prettier": {
+        "trailingComma": "none",
+        "tabWidth": 4,
+        "semi": false,
+        "singleQuote": true
+    }
 }
