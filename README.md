@@ -9,8 +9,19 @@ Simple AWS Lambda URL based proxy for making CORS requests from browser to any H
 You need AWS account first.
 Also you need your IAM user has access to deploy AWS lambdas.
 
-```
-node_modules/.bin/serverless config credentials --provider aws --key <aws_key> --secret <aws_secret>
+As was done [here](./serverless.yml#L5) - provide your local AWS profile
+with properly scoped permissions
+
+And set the [region](./serverless.yml#L10)
+
+```yml
+provider:
+    profile: <your_local_aws_profile>
+    name: aws
+    runtime: nodejs16.x
+    timeout: 10 # max = 30
+    stage: dev
+    region: <your-region>
 ```
 
 #### 1. Install
@@ -20,12 +31,6 @@ npm install
 ```
 
 #### 2. Deploy
-
-```
-node_modules/.bin/serverless deploy --region <aws_region>
-```
-
-or
 
 ```
 npm run deploy
