@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.1",
-    "serverless": "^2.1.1"
+    "serverless": "^2.72.3"
   },
   "devDependencies": {
     "serverless-offline": "^6.7.0"
